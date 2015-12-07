@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Jokes Dislay Library</string>
+    <string name="joke_title">My Joke</string>
 </resources>
