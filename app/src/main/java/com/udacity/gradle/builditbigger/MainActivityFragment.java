@@ -10,14 +10,13 @@ import android.view.ViewGroup;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
-import maximyudin.lib.Jokes;
 import maximyudin.lib.jokesdislaylibrary.JokeActivity;
 
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment {
+public class MainActivityFragment extends Fragment implements GetJokeListener {
     public MainActivityFragment() {
     }
 
@@ -38,13 +37,17 @@ public class MainActivityFragment extends Fragment {
         root.findViewById(R.id.btnDisplayJoke).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Jokes jokes = new Jokes();
-                Intent jokeDisplay = new Intent(getContext(), JokeActivity.class);
-                jokeDisplay.putExtra(JokeActivity.JOKE, jokes.getJoke());
-                startActivity(jokeDisplay);
+                new JokesAsyncTask().execute(MainActivityFragment.this);
             }
         });
 
         return root;
+    }
+
+    @Override
+    public void onGetJokeCompleted(String jokeText) {
+        Intent jokeDisplay = new Intent(getContext(), JokeActivity.class);
+        jokeDisplay.putExtra(JokeActivity.JOKE, jokeText);
+        startActivity(jokeDisplay);
     }
 }
