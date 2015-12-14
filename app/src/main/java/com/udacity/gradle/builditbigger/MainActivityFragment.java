@@ -6,6 +6,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -17,6 +19,10 @@ import maximyudin.lib.jokesdislaylibrary.JokeActivity;
  * A placeholder fragment containing a simple view.
  */
 public class MainActivityFragment extends Fragment implements GetJokeListener {
+    private RelativeLayout rlContent;
+    private ProgressBar pbLoading;
+
+
     public MainActivityFragment() {
     }
 
@@ -24,6 +30,9 @@ public class MainActivityFragment extends Fragment implements GetJokeListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_main, container, false);
+
+        rlContent = (RelativeLayout) root.findViewById(R.id.rlContent);
+        pbLoading = (ProgressBar) root.findViewById(R.id.pbLoading);
 
         AdView mAdView = (AdView) root.findViewById(R.id.adView);
         // Create an ad request. Check logcat output for the hashed device ID to
@@ -37,6 +46,7 @@ public class MainActivityFragment extends Fragment implements GetJokeListener {
         root.findViewById(R.id.btnDisplayJoke).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                showLoadingIndicator(true);
                 new JokesAsyncTask().execute(MainActivityFragment.this);
             }
         });
@@ -46,8 +56,14 @@ public class MainActivityFragment extends Fragment implements GetJokeListener {
 
     @Override
     public void onGetJokeCompleted(String jokeText) {
+        showLoadingIndicator(false);
         Intent jokeDisplay = new Intent(getContext(), JokeActivity.class);
         jokeDisplay.putExtra(JokeActivity.JOKE, jokeText);
         startActivity(jokeDisplay);
+    }
+
+    private void showLoadingIndicator(boolean willShowProgress) {
+        pbLoading.setVisibility(willShowProgress ? View.VISIBLE : View.GONE);
+        rlContent.setVisibility(willShowProgress ? View.GONE : View.VISIBLE);
     }
 }
