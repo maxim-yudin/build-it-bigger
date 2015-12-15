@@ -41,7 +41,7 @@ public class JokesAsyncTask extends AsyncTask<GetJokeListener, Void, String> {
         try {
             return jokeApiService.getJoke().execute().getJokeText();
         } catch (IOException e) {
-            return e.getMessage();
+            return null;
         }
     }
 

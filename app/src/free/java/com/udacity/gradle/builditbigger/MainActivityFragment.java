@@ -3,11 +3,13 @@ package com.udacity.gradle.builditbigger;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -57,6 +59,10 @@ public class MainActivityFragment extends Fragment implements GetJokeListener {
     @Override
     public void onGetJokeCompleted(String jokeText) {
         showLoadingIndicator(false);
+        if (TextUtils.isEmpty(jokeText)) {
+            Toast.makeText(getContext(), getString(R.string.joke_fetch_fail), Toast.LENGTH_SHORT).show();
+            return;
+        }
         Intent jokeDisplay = new Intent(getContext(), JokeActivity.class);
         jokeDisplay.putExtra(JokeActivity.JOKE, jokeText);
         startActivity(jokeDisplay);
