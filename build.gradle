@@ -51,4 +51,4 @@ task checkAllTests(dependsOn: ["runGAE", "runTests", "stopGAE"]) {
 }
 
 runTests.mustRunAfter "runGAE"
-stopGAE.mustRunAfter "runTests"
+runTests.finalizedBy "stopGAE"
