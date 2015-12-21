@@ -17,3 +17,38 @@ allprojects {
         jcenter()
     }
 }
+
+task runGAE(dependsOn: ":backend:appengineRun") {
+    evaluationDependsOn ":backend"
+
+    project(":backend") {
+        appengine {
+            daemon true
+        }
+    }
+
+    doLast {
+        println "GAE has been started."
+    }
+}
+
+task stopGAE(dependsOn: ":backend:appengineStop") {
+    doLast {
+        println "GAE has been stopped."
+    }
+}
+
+task runTests(dependsOn: ":app:connectedAndroidTest") {
+    doLast {
+        println "Tests have been completed."
+    }
+}
+
+task checkAllTests(dependsOn: ["runGAE", "runTests", "stopGAE"]) {
+    doLast {
+        println "All tests have been checked."
+    }
+}
+
+runTests.mustRunAfter "runGAE"
+stopGAE.mustRunAfter "runTests"
