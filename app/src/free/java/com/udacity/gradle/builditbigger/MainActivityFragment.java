@@ -11,8 +11,10 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 
 import maximyudin.lib.jokesdislaylibrary.JokeActivity;
 
@@ -23,9 +25,42 @@ import maximyudin.lib.jokesdislaylibrary.JokeActivity;
 public class MainActivityFragment extends Fragment implements GetJokeListener {
     private RelativeLayout rlContent;
     private ProgressBar pbLoading;
+    InterstitialAd mInterstitialAd;
+    private String jokeText;
 
 
     public MainActivityFragment() {
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        mInterstitialAd = new InterstitialAd(getActivity());
+        mInterstitialAd.setAdUnitId(getString(R.string.banner_ad_unit_id));
+        requestNewInterstitial();
+
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                requestNewInterstitial();
+                showJoke(jokeText);
+            }
+        });
+    }
+
+    private void requestNewInterstitial() {
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+
+        mInterstitialAd.loadAd(adRequest);
+    }
+
+    private void showJoke(String jokeText) {
+        Intent jokeDisplay = new Intent(getContext(), JokeActivity.class);
+        jokeDisplay.putExtra(JokeActivity.JOKE, jokeText);
+        startActivity(jokeDisplay);
     }
 
     @Override
@@ -63,9 +98,12 @@ public class MainActivityFragment extends Fragment implements GetJokeListener {
             Toast.makeText(getContext(), getString(R.string.joke_fetch_fail), Toast.LENGTH_SHORT).show();
             return;
         }
-        Intent jokeDisplay = new Intent(getContext(), JokeActivity.class);
-        jokeDisplay.putExtra(JokeActivity.JOKE, jokeText);
-        startActivity(jokeDisplay);
+        this.jokeText = jokeText;
+        if (mInterstitialAd.isLoaded()) {
+            mInterstitialAd.show();
+        } else {
+            showJoke(jokeText);
+        }
     }
 
     private void showLoadingIndicator(boolean willShowProgress) {
