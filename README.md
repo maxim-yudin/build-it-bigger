@@ -1,4 +1,4 @@
-# Build It Bigger
+# Build It Bigger (includes in Udacity Nanodergree)
 
 In this project, I've created an app with multiple flavors that uses
 multiple libraries and Google Could Endpoints. The app consists
